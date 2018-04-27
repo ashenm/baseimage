@@ -2,3 +2,4 @@
 .git
 .travis.yml
 .dockerignore
+scripts
