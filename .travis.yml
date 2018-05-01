@@ -28,3 +28,7 @@ deploy:
 
 after_deploy:
   - 'curl --fail --silent --show-error --request POST --output /dev/null --header "Content-Type: application/json" --header "Accept: application/json" --header "Travis-API-Version: 3" --header "Authorization: token $TRAVIS_API_TOKEN" --data "{ \"request\": { \"branch\": \"master\", \"message\": \"Build to parity with commit "$TRAVIS_COMMIT" on "$TRAVIS_REPO_SLUG"\" } }" "https://api.travis-ci.org/repo/ashenm%2Fworkspace/requests"'
+
+notifications:
+  slack:
+    secure: LNYfd7rxZlu8K3mJMVBezK3gOkCiUiL7CdODm8sp6ni5E2GMwIgsQBxd7OOfcUWXSswbNUMf98nsvqU64fmkHN5eAwy9nYw6CtbnXNb3DUbbHj+ryavFHR4uYtFUPbJ0iCN8tciHw/CyFdTinS7iIARe8arplzzj27PRMhBDHOuy4MQ6r2O6jworJi/fAFn6O3Pj4L5p6Oxb3nhYV7Bt3zQfXqcWmEucYyU3pMefdBM6BBCdmKrRGJTBdHaBcANhtt6IRw5soss+lhOYb/SPPB3r386gxeukAJaBau2soeELmQlDTaAiA584otUBN8cyrhEh48pcT6NJI2HOB6Fdmq88MukOCqBcq6i5vTpyi68+nqcen7HQ1bW32mbrYo+QfAoxulqsBpycbN8EbuQMlyUhokNkQxiRWjZ4typ9KSnKqrsHqTDiSLHQR0PhOUsuW1EKhyPiWD0/kvJghcLv2HeyZg/OFDJQoyztPGWijC4gbVnBM7Gt8G5D7ZGVF71Yanm82Z+RIrt9KrgbVNBYxi1jOwCrIeYRV+R/YITf1gk2XrbbISpmlSpgQmPxT/NPRNJiQE2WjMfl/GuL6xXkJFKJ8f/1AvTJXA19F/y06tGbXkJujWXhNJg1V6WrBBO+XY9VC8KYhE3tA39iItJXcE8pZiF1PL2PT+YWt9lWb4s=
