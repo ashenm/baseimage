@@ -20,11 +20,11 @@ then
   alias ls='ls --color=auto -F'
 
   # git
-  alias st='git status'
   alias push='git push'
   alias log='git log --oneline'
   alias pull='git pull --rebase'
   alias commit='git add --all; git commit'
+  alias st='git status --ignored'
 
   # vim
   alias vi='vim'
