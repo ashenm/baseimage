@@ -3,11 +3,15 @@ FROM ubuntu:18.04
 # configure environment
 ENV TERM xterm
 
-# configure locales
+# install prerequisite packages
+# for environment configuration
+# and generate environment locales
 RUN DEBIAN_FRONTEND=noninteractive && \
-  apt-get update && apt-get install -y locales language-pack-en && \
+  apt-get update && apt-get install -y apt-utils locales language-pack-en && \
   locale-gen en_US en_US.UTF-8 && dpkg-reconfigure locales && \
   rm -rf /var/lib/apt/lists/*
+
+# set environment locales
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 ENV LANGUAGE en_US:en
