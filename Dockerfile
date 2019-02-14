@@ -10,6 +10,7 @@ RUN DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get install --yes --no-install-recommends \
     apt-utils \
+    gnupg-agent \
     language-pack-en \
     locales \
     software-properties-common && \
