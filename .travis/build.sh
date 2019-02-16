@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# Build Docker Image
 
-docker build -t "$TRAVIS_REPO_SLUG" .
+docker build --tag "$TRAVIS_REPO_SLUG" .
 
