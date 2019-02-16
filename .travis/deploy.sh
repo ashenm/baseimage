@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# Deploy Image to hub.docker.com
 
 set -e
 

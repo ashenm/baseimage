@@ -1,10 +1,11 @@
 #!/usr/bin/env sh
+# Configure Build Environment
 
 set -e
 
 # vimrc
 curl --fail --silent --show-error --create-dirs --output etc/vim/vimrc.local \
-    https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim
+    --url https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim
 
 # clinch permissions
 find etc -type d -exec chmod 755 {} \;
