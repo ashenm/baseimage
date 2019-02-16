@@ -1,14 +1,17 @@
 FROM ubuntu:18.04
 
+# avoid prompts
+ARG DEBIAN_FRONTEND=noninteractive
+
 # configure environment
 ENV TERM xterm
 
 # install prerequisite packages
 # for environment configuration
 # and generate environment locales
-RUN DEBIAN_FRONTEND=noninteractive && \
-  apt-get update && \
+RUN apt-get update && \
   apt-get install --yes --no-install-recommends \
+    apt-transport-https \
     apt-utils \
     gnupg-agent \
     language-pack-en \
@@ -24,11 +27,9 @@ ENV LC_ALL en_US.UTF-8
 ENV LANGUAGE en_US:en
 
 # install common essentials
-RUN DEBIAN_FRONTEND=noninteractive && \
-  add-apt-repository -y ppa:git-core/ppa && \
+RUN add-apt-repository -y ppa:git-core/ppa && \
   apt-get update && \
   apt-get install --yes --no-install-recommends \
-    apt-transport-https \
     build-essential \
     curl \
     git \
