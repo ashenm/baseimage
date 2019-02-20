@@ -33,6 +33,7 @@ RUN add-apt-repository -y ppa:git-core/ppa && \
     build-essential \
     curl \
     git \
+    less \
     tmux \
     unzip \
     vim \
