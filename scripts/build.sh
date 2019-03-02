@@ -3,18 +3,18 @@
 
 set -e
 
-# image label
-BUILD_TAG=dev
+# image metadata
+BUILD_TAG=latest-local
 BUILD_IMAGE=ashenm/baseimage
 
 # scripts directory
-SCRIPT_DIRECTORY="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+SCRIPT_DIRECTORY="$(dirname "$(readlink -f "${BASH_SOURCE}")")"
 
 # handle custom tag
-test "$1" = "-t" \
-  -o "$1" = "--tag" \
-    && BUILD_TAG="${2:?Invalid TAG}"
+test "${1}" = "-t" \
+  -o "${1}" = "--tag" \
+    && { BUILD_TAG="${2:?Invalid TAG}"; BUILD_CONTEXT=":${2%-local}"; }
 
 # build image
-docker build --no-cache --tag "$BUILD_IMAGE:$BUILD_TAG" "$(dirname "$SCRIPT_DIRECTORY")"
+docker build --no-cache --tag "${BUILD_IMAGE}:${BUILD_TAG}" "${BUILD_CONTEXT:-$(dirname "${SCRIPT_DIRECTORY}")}"
 

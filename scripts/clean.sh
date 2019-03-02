@@ -3,16 +3,17 @@
 
 set -e
 
-# image label
-BUILD_TAG=dev
+# image metadata
 BUILD_TARGET=ashenm/baseimage
+BUILD_REFERENCE="ashenm/baseimage:*-local"
 
-# remove only `dev` tag if
-# not explicitly specified
-test ! "$1" = "-a" \
-  -a ! "$1" = "--all" \
-    && BUILD_TARGET="${BUILD_TARGET}:${BUILD_TAG}"
+# remove only `*-local` tags
+# unless explicitly specified
+test "${1}" = "-a" \
+  -o "${1}" = "--all" \
+    && BUILD_REFERENCE="ashenm/baseimage"
 
-# remove all `BUILD_TARGET` images
-docker images --all "${BUILD_TARGET}" | awk 'NR>1 { print $3 }' | xargs -r docker rmi
+# remove all selected images
+docker images --all --filter reference="${BUILD_REFERENCE}" \
+  | awk 'NR>1 { print $3 }' | xargs -r docker rmi
 
