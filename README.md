@@ -1,0 +1,2 @@
+# Parent Image for Docker Containers #
+[![Build Status](https://travis-ci.org/ashenm/baseimage.svg?branch=developer)](https://travis-ci.org/ashenm/baseimage) [![Image Tag](https://img.shields.io/badge/tag-dev-ffeb8b.svg)](https://github.com/ashenm/baseimage/tree/dev) [![Image Overview](https://images.microbadger.com/badges/image/ashenm/baseimage:developer.svg)](https://hub.docker.com/r/ashenm/baseimage/)
