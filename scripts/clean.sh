@@ -3,17 +3,11 @@
 
 set -e
 
-# image metadata
-BUILD_TARGET=ashenm/baseimage
-BUILD_REFERENCE="ashenm/baseimage:*-local"
-
-# remove only `*-local` tags
-# unless explicitly specified
-test "${1}" = "-a" \
-  -o "${1}" = "--all" \
-    && BUILD_REFERENCE="ashenm/baseimage"
+# handle image selection
+test "$1" = "-a" \
+  -o "$1" = "--all" && \
+    TRAVIS_BRANCH="*"
 
 # remove all selected images
-docker images --all --filter reference="${BUILD_REFERENCE}" \
-  | awk 'NR>1 { print $3 }' | xargs -r docker rmi
-
+docker images --all --filter reference="${TRAVIS_REPO_SLUG:-ashenm/baseimage}:${TRAVIS_BRANCH:-latest-alpha}" \
+  | awk 'NR>1 { print $3 }' | xargs -r docker rmi --force

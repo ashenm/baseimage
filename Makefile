@@ -1,22 +1,23 @@
-default:
-	$(MAKE) build
-	$(MAKE) build-dev
-
 build:
 	./scripts/build.sh
 
-build-dev:
-	./scripts/build.sh --tag dev-local
-
-run:
-	./scripts/run.sh --tag latest-local
-
-run-dev:
-	./scritps/run.sh --tag dev-local
-
-purge:
-	./scripts/clean.sh --all
+assess:
+	./scripts/assess.sh
 
 clean:
 	./scripts/clean.sh
 
+culminate:
+	./scripts/culminate.sh
+
+deploy:
+	./scripts/deploy.sh
+
+install:
+	./scripts/install.sh
+
+purge:
+	./scripts/clean.sh --all
+
+run:
+	./scripts/run.sh
