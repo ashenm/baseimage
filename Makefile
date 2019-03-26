@@ -19,5 +19,8 @@ install:
 purge:
 	./scripts/clean.sh --all
 
+rebuild:
+	./scripts/build.sh --no-cache
+
 run:
 	./scripts/run.sh
