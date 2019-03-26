@@ -1,3 +1,6 @@
+# standard envs
+export SHELL
+
 # set editor
 export EDITOR=vim
 
