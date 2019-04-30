@@ -9,5 +9,4 @@ test "$1" = "-a" \
     TRAVIS_BRANCH="*"
 
 # remove all selected images
-docker images --all --filter reference="${TRAVIS_REPO_SLUG:-ashenm/baseimage}:${TRAVIS_BRANCH:-developer-alpha}" \
-  | awk 'NR>1 { print $3 }' | xargs -r docker rmi --force
+docker images --all --filter reference="${TRAVIS_REPO_SLUG:-ashenm/baseimage}:${TRAVIS_BRANCH:-developer-alpha}" --format {{.ID}} | xargs -r docker rmi --force
