@@ -17,10 +17,10 @@ then
   alias rm='rm -i'
 
   # directory listing
-  alias l='ls -CF'
+  alias l='ls -C'
   alias la='ls -A'
-  alias ll='ls -alF'
-  alias ls='ls --color=auto -F'
+  alias ll='ls -Al'
+  alias ls='ls --classify --color=auto'
 
   # git
   alias push='git push'
