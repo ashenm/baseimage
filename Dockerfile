@@ -41,7 +41,8 @@ RUN add-apt-repository -y ppa:git-core/ppa && \
   rm -rf /var/lib/apt/lists/*
 
 # revise system defaults
-RUN sed --in-place --regexp-extended 's/^( *)(alias l.*)/\1#\2/' /etc/skel/.bashrc
+RUN sed --in-place --regexp-extended 's/^( *)(alias l.*)/\1#\2/' /etc/skel/.bashrc && \
+  cp --force /etc/skel/.bashrc /root/.bashrc
 
 # configure system
 COPY etc /etc/

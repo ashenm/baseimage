@@ -4,6 +4,12 @@ export SHELL
 # set editor
 export EDITOR=vim
 
+# directory listing
+alias l='ls -C'
+alias la='ls -A'
+alias ll='ls -Al'
+alias ls='ls --classify --color=auto'
+
 # if not root
 if [ `id -u` -ne 0 ]
 then
@@ -15,12 +21,6 @@ then
   alias cp='cp -i'
   alias mv='mv -i'
   alias rm='rm -i'
-
-  # directory listing
-  alias l='ls -C'
-  alias la='ls -A'
-  alias ll='ls -Al'
-  alias ls='ls --classify --color=auto'
 
   # git
   alias push='git push'
