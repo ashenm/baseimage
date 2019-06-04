@@ -1,2 +1,2 @@
-etc/** linguist-detectable=false
+etc/* linguist-detectable=false
 scripts/* linguist-detectable=false
