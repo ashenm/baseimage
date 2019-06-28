@@ -4,6 +4,9 @@ export SHELL
 # set editor
 export EDITOR=vim
 
+# pinentry-curses
+export GPG_TTY=`tty`
+
 # directory listing
 alias l='ls -C'
 alias la='ls -A'
