@@ -21,7 +21,7 @@ deploy:
     condition: $TRAVIS_BRANCH != *-alpha
 
 after_deploy:
-  '[ "$TRAVIS_EVENT_TYPE" != "push" -a "$TRAVIS_EVENT_TYPE" != "api" ] || make culminate' # ignore pull_request and cron triggers
+  '[ "$TRAVIS_BRANCH" != "developer" ] || [ "$TRAVIS_EVENT_TYPE" != "push" -a "$TRAVIS_EVENT_TYPE" != "api" ] || make culminate' # only on api and push to developer
 
 notifications:
   slack:
