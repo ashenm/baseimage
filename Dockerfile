@@ -14,7 +14,7 @@ RUN echo '# override man page and documentation page exclusion' | \
   echo 'path-include=/usr/share/man/*' | \
     tee -a /etc/dpkg/dpkg.cfg.d/includes && \
   apt-get update && dpkg -l | grep ^ii | cut -d' ' -f3 | \
-    xargs apt-get install --yes --no-install-recommends --reinstall && \
+    xargs apt-get install --yes --no-install-recommends --reinstall --option APT::Immediate-Configure=false && \
   rm -rf /var/lib/apt/lists/*
 
 # install development packages
