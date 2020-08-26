@@ -21,7 +21,7 @@ deploy:
     condition: $TRAVIS_BRANCH != *-alpha
 
 after_deploy:
-  '[ "$TRAVIS_BRANCH" != "latest" ] || [ "$TRAVIS_EVENT_TYPE" != "push" -a "$TRAVIS_EVENT_TYPE" != "api" ] || make culminate' # only on api and push to latest
+  '[ "$TRAVIS_BRANCH" != "latest" ] || [ "$TRAVIS_EVENT_TYPE" = "pull_request" ] || make culminate' # only on api, cron, and push to latest
 
 notifications:
   slack:
