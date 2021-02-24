@@ -1,6 +1,5 @@
 *.md
 .git
-.travis.yml
 .dockerignore
 Makefile
 scripts

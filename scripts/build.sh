@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 # Build Docker Image
 
-exec docker build --no-cache --tag "${TRAVIS_REPO_SLUG:-ashenm/baseimage}:${TRAVIS_BRANCH:-alpha}" .
+exec docker build --no-cache --tag "${REPOSITORY_SLUG:-ashenm/baseimage}:${REPOSITORY_BRANCH:-alpha}" .
