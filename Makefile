@@ -7,9 +7,6 @@ assess:
 clean:
 	./scripts/clean.sh
 
-culminate:
-	./scripts/culminate.sh
-
 deploy:
 	./scripts/deploy.sh
 
