@@ -105,10 +105,25 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     runs-on: ubuntu-22.04
 
+  reverse-dependencies:
+    if: ${{ github.ref_name == 'master' }}
+    needs:
+      - forks
+    steps:
+      - run: |
+          # ashenm/workspace:latest
+          curl --fail --request POST --header "Accept: application/vnd.github.v3+json" \
+            --header "Authorization: token ${OCTOCAT_TOKEN}" --data "{ \"ref\": \"master\" }" \
+            --url "https://api.github.com/repos/ashenm/workspace/actions/workflows/build.yml/dispatches"
+        env:
+          OCTOCAT_TOKEN: ${{ secrets.OCTOCAT_TOKEN }}
+    runs-on: ubuntu-22.04
+
   slack:
     needs:
       - latest
       - forks
+      - reverse-dependencies
     if: ${{ always() }}
     steps:
       - uses: Gamesight/slack-workflow-status@master
@@ -118,4 +133,5 @@ jobs:
           channel: "#github"
           name: "GitHub Workflow"
     runs-on: ubuntu-22.04
+
 # vim: set expandtab shiftwidth=2 syntax=yaml:
