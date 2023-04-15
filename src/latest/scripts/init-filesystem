@@ -2,14 +2,17 @@
 
 set -e
 
+SCRIPTS_DIRECTORY="$(readlink --canonicalize $(dirname $0))"
+ROOT_DIRECTORY=$(dirname $SCRIPTS_DIRECTORY)
+
 # vimrc
-curl --fail --silent --show-error --create-dirs --output src/latest/etc/vim/vimrc.local \
+curl --fail --silent --show-error --create-dirs --output $ROOT_DIRECTORY/etc/vim/vimrc.local \
     --url https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim
 
 # environment.sh
-curl --fail --silent --show-error --create-dirs --output src/latest/etc/profile.d/environment.sh \
+curl --fail --silent --show-error --create-dirs --output $ROOT_DIRECTORY/etc/profile.d/environment.sh \
     --url https://raw.githubusercontent.com/ashenm/environment/master/linux/components/etc/profile.d/environment.sh
 
 # clinch permissions
-find etc -type d -exec chmod 755 {} \;
-find etc -type f -exec chmod 644 {} \;
+find $ROOT_DIRECTORY/etc -type d -exec chmod 755 {} \;
+find $ROOT_DIRECTORY/etc -type f -exec chmod 644 {} \;
