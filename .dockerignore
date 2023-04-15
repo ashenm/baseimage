@@ -1,5 +1,0 @@
-*.md
-.git
-.dockerignore
-Makefile
-scripts

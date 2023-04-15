@@ -2,121 +2,120 @@ name: Build Image
 
 on:
   push:
-    ~
+    branches:
+      - master
   pull_request:
-    ~
+    branches:
+      - "**"
   workflow_dispatch:
-    ~
+    branches:
+      - master
   schedule:
-    - cron:  '0 0 * * 0'
+    - cron: "0 0 * * 0"
 
 jobs:
-  build:
+  metadata:
+    steps:
+      - id: git
+        run: echo "build_commit_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+    outputs:
+      build_commit_sha: ${{ steps.git.outputs.build_commit_sha }}
+    runs-on: ubuntu-latest
+
+  latest:
+    needs:
+      - metadata
     if: ${{ !startsWith(github.event.head_commit.message, '[Skip CI]') }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           persist-credentials: false
-      - run: make install
-      - run: make build
-      - run: docker tag ${GITHUB_REPOSITORY}:alpha ${GITHUB_REPOSITORY}:rc
-      - run: docker save ${GITHUB_REPOSITORY}:rc --output /tmp/docker-image.tar
-      - uses: actions/upload-artifact@v2
+      - uses: docker/setup-qemu-action@v2
         with:
-          name: docker-image.tar
-          path: /tmp/docker-image.tar
-    runs-on: ubuntu-latest
-  assess:
-    needs:
-      - build
-    steps:
-      - uses: actions/checkout@v3
+          platforms: all
+      - uses: docker/setup-buildx-action@v2
         with:
-          persist-credentials: false
-      - uses: actions/download-artifact@v2
+          install: true
+      - uses: docker/login-action@v2
         with:
-          name: docker-image.tar
-          path: /tmp
-      - run: docker load --input /tmp/docker-image.tar
-      - run: docker tag ${GITHUB_REPOSITORY}:rc ${GITHUB_REPOSITORY}:alpha
-      - run: make assess
-    runs-on: ubuntu-latest
-  package:
-    needs:
-      - assess
-    steps:
-      - uses: actions/download-artifact@v2
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: ./src/latest/scripts/init-filesystem
+      - uses: docker/build-push-action@v4
         with:
-          name: docker-image.tar
-          path: /tmp
-      - run: cat /tmp/docker-image.tar | gzip > /tmp/docker-image.tar.gz
-        continue-on-error: true
-      - uses: actions/upload-artifact@v2
-        with:
-          name: docker-image.tar.gz
-          path: /tmp/docker-image.tar.gz
-          if-no-files-found: warn
-    runs-on: ubuntu-latest
-  dockerhub:
-    needs:
-      - assess
-    if: ${{ github.event_name != 'pull_request' && !startsWith(github.event.head_commit.message, '[Skip Deploy]') }}
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: docker-image.tar
-          path: /tmp
-      - run: docker load --input /tmp/docker-image.tar
-      - run: docker tag ${GITHUB_REPOSITORY}:rc ${GITHUB_REPOSITORY}:${GITHUB_REF##*/}
-      - run: |
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: src/${{ github.job }}
+          platforms: linux/amd64,linux/arm64
+          pull: true
+          push: true
+          tags: ghcr.io/${{ github.repository }}/${{ github.job }}:${{ needs.metadata.outputs.build_commit_sha }}
+      - if: ${{ github.ref_name == 'master' }}
+        run: |
           echo ${DOCKER_PASSWORD} | docker login --password-stdin --username ${DOCKER_USERNAME}
-          docker push ${GITHUB_REPOSITORY}:${GITHUB_REF##*/}
+          docker buildx imagetools create --tag ${{ github.repository }}:${{ github.job }} \
+            ghcr.io/${{ github.repository }}/${{ github.job }}:${{ needs.metadata.outputs.build_commit_sha }}
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    runs-on: ubuntu-latest
-  github:
+    runs-on: ubuntu-22.04
+
+  forks:
     needs:
-      - assess
-    if: ${{ github.event_name != 'pull_request' && !startsWith(github.event.head_commit.message, '[Skip Deploy]') }}
+      - latest
+      - metadata
+    strategy:
+      matrix:
+        source: [developer]
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v2
         with:
-          name: docker-image.tar
-          path: /tmp
-      - run: docker load --input /tmp/docker-image.tar
-      - run: docker tag ${GITHUB_REPOSITORY}:rc docker.pkg.github.com/${GITHUB_REPOSITORY}/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}
-      - run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login --password-stdin --username ashenm docker.pkg.github.com
-          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}
-    runs-on: ubuntu-latest
-  culminate:
-    needs:
-      - dockerhub
-    if: ${{ github.ref == 'refs/heads/latest' }}
-    steps:
-      - run: |
-          # ashenm/baseimage:developer
-          curl --fail --request POST --header "Accept: application/vnd.github.v3+json" --header "Authorization: token ${OCTOCAT_TOKEN}" --data "{ \"ref\": \"developer\" }" --url "https://api.github.com/repos/ashenm/baseimage/actions/workflows/build.yml/dispatches"
+          persist-credentials: false
+      - uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+      - uses: docker/setup-buildx-action@v2
+        with:
+          install: true
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: ./src/${{ matrix.source }}/scripts/init-filesystem
+      - uses: docker/build-push-action@v4
+        with:
+          build-args: |
+            BASEIMAGE=ghcr.io/${{ github.repository }}/latest:${{ needs.metadata.outputs.build_commit_sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: src/${{ matrix.source }}
+          platforms: linux/amd64,linux/arm64
+          pull: false
+          push: true
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.source }}:${{ needs.metadata.outputs.build_commit_sha }}
+      - if: ${{ github.ref_name == 'master' }}
+        run: |
+          echo ${DOCKER_PASSWORD} | docker login --password-stdin --username ${DOCKER_USERNAME}
+          docker buildx imagetools create --tag ${{ github.repository }}:${{ matrix.source }} \
+            ghcr.io/${{ github.repository }}/${{ matrix.source }}:${{ needs.metadata.outputs.build_commit_sha }}
         env:
-          OCTOCAT_TOKEN: ${{ secrets.OCTOCAT_TOKEN }}
-    runs-on: ubuntu-latest
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    runs-on: ubuntu-22.04
+
   slack:
     needs:
-      - build
-      - assess
-      - package
-      - dockerhub
-      - github
-      - culminate
+      - latest
+      - forks
     if: ${{ always() }}
     steps:
       - uses: Gamesight/slack-workflow-status@master
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          channel: '#github'
-          name: 'GitHub Workflow'
-    runs-on: ubuntu-latest
-
+          channel: "#github"
+          name: "GitHub Workflow"
+    runs-on: ubuntu-22.04
 # vim: set expandtab shiftwidth=2 syntax=yaml:
