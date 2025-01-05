@@ -7,11 +7,13 @@ on:
   pull_request:
     branches:
       - "**"
-  workflow_dispatch:
-    branches:
-      - master
+    paths:
+      - ".github/workflows/build.yml"
+      - "src/**"
+      - "scripts/**"
   schedule:
     - cron: "0 0 * * 0"
+  workflow_dispatch:
 
 jobs:
   metadata:
@@ -133,5 +135,4 @@ jobs:
           channel: "#github"
           name: "GitHub Workflow"
     runs-on: ubuntu-22.04
-
 # vim: set expandtab shiftwidth=2 syntax=yaml:
