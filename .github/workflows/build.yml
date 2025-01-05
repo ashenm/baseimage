@@ -27,7 +27,8 @@ jobs:
   latest:
     needs:
       - metadata
-    if: ${{ !startsWith(github.event.head_commit.message, '[Skip CI]') }}
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@v2
         with:
@@ -67,6 +68,8 @@ jobs:
     needs:
       - latest
       - metadata
+    permissions:
+      packages: write
     strategy:
       matrix:
         source: [developer]
