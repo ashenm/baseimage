@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 # avoid prompts
 ARG DEBIAN_FRONTEND=noninteractive
@@ -35,7 +35,6 @@ RUN add-apt-repository -y ppa:git-core/ppa && \
     git \
     less \
     tmux \
-    unminimize \
     unzip \
     vim \
     zip && \
