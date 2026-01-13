@@ -54,6 +54,9 @@ jobs:
           pull: true
           push: true
           tags: ghcr.io/${{ github.repository }}/${{ github.job }}:${{ needs.metadata.outputs.build_commit_sha }}
+      - run: ./src/${{ github.job }}/scripts/test-image
+        env:
+          DOCKER_IMAGE: ghcr.io/${{ github.repository }}/${{ github.job }}:${{ needs.metadata.outputs.build_commit_sha }}
       - if: ${{ github.ref_name == 'master' }}
         run: |
           echo ${DOCKER_PASSWORD} | docker login --password-stdin --username ${DOCKER_USERNAME}
@@ -100,6 +103,9 @@ jobs:
           pull: false
           push: true
           tags: ghcr.io/${{ github.repository }}/${{ matrix.source }}:${{ needs.metadata.outputs.build_commit_sha }}
+      - run: ./src/${{ matrix.source }}/scripts/test-image
+        env:
+          DOCKER_IMAGE: ghcr.io/${{ github.repository }}/${{ matrix.source }}:${{ needs.metadata.outputs.build_commit_sha }}
       - if: ${{ github.ref_name == 'master' }}
         run: |
           echo ${DOCKER_PASSWORD} | docker login --password-stdin --username ${DOCKER_USERNAME}

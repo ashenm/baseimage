@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Assess Build Image
+
+set -e
